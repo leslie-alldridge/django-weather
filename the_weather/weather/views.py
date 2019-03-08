@@ -1,5 +1,5 @@
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import City
 from .forms import CityForm
 # Create your views here.
@@ -23,6 +23,7 @@ def index(request):
         r = requests.get(url.format(city)).json()
 
         city_weather = {
+            'id': city.id,
             'city': city.name,
             'temperature': r['main']['temp'],
             'description': r['weather'][0]['description'],
@@ -36,3 +37,12 @@ def index(request):
     context = {'weather_data': weather_data, 'form': form}
 
     return render(request, 'weather/weather.html', context)
+
+
+def delete(request, id):
+
+    if request.method == 'POST':
+        print(request)
+        City.objects.filter(id=id).delete()
+
+    return redirect('/')
